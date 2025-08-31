@@ -57,6 +57,21 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
+    # probability of following the link from page
+    linked = corpus[page]
+    probabilities = {}
+    for page in corpus:
+        # add the key of the page
+        probabilities[page] = []
+        # meaning it has direct connection
+        if page in linked:
+            probabilities[page] = len(linked)/damping_factor
+        else:
+            # if not direct connection, probability of the page is the probability of choosing random between all pages
+            probabilities[page] = (1-damping_factor)/len(corpus)
+    return probabilities
+
+
     raise NotImplementedError
 
 
