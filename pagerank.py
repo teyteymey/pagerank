@@ -60,19 +60,15 @@ def transition_model(corpus, page, damping_factor):
     # probability of following the link from page
     linked = corpus[page]
     probabilities = {}
+
     for page in corpus:
-        # add the key of the page
-        probabilities[page] = []
+        # probability of choosing random between all pages
+        probabilities[page] = (1-damping_factor)/len(corpus)
         # meaning it has direct connection
         if page in linked:
-            probabilities[page] = len(linked)/damping_factor
-        else:
-            # if not direct connection, probability of the page is the probability of choosing random between all pages
-            probabilities[page] = (1-damping_factor)/len(corpus)
+            probabilities[page] += len(linked)/damping_factor
+            
     return probabilities
-
-
-    raise NotImplementedError
 
 
 def sample_pagerank(corpus, damping_factor, n):
