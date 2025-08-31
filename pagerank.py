@@ -20,6 +20,10 @@ def main():
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
 
+def test():
+    corpus = crawl("corpus1")
+    print(transition_model(corpus, "bfs.html", 0.85))
+
 
 def crawl(directory):
     """
@@ -57,6 +61,7 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
+    print(corpus)
     # probability of following the link from page
     linked = corpus[page]
     probabilities = {}
@@ -96,4 +101,4 @@ def iterate_pagerank(corpus, damping_factor):
 
 
 if __name__ == "__main__":
-    main()
+    test()
