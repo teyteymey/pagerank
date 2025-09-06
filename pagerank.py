@@ -2,6 +2,7 @@ import os
 import random
 import re
 import sys
+from collections import defaultdict
 
 DAMPING = 0.85
 SAMPLES = 10000
@@ -108,7 +109,19 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # initialize to equal probability
+    rank = {page: 1/len(corpus) for page in corpus}
+    # reverse the corpus to know which pages could lead to key
+    reverse_corpus = defaultdict(list)
+    for page in corpus:
+        for linked_page in corpus[page]:
+            reverse_corpus[linked_page].append(page)
+
+    print(reverse_corpus)
+    
+
+        
+
 
 
 if __name__ == "__main__":
