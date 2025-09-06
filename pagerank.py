@@ -5,6 +5,7 @@ import sys
 from collections import defaultdict
 import copy
 
+
 DAMPING = 0.85
 SAMPLES = 10000
 
@@ -21,11 +22,6 @@ def main():
     print(f"PageRank Results from Iteration")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
-
-def test():
-    corpus = crawl("corpus1")
-    # print(transition_model(corpus, "bfs.html", 0.85))
-    sample_pagerank(corpus, DAMPING, SAMPLES)
 
 
 def crawl(directory):
@@ -101,6 +97,7 @@ def sample_pagerank(corpus, damping_factor, n):
 
     return rank
 
+
 def iterate_pagerank(corpus, damping_factor):
     """
     Return PageRank values for each page by iteratively updating
@@ -114,10 +111,19 @@ def iterate_pagerank(corpus, damping_factor):
     rank = {page: 1/len(corpus) for page in corpus}
     # reverse the corpus to know which pages could lead to key
     reverse_corpus = defaultdict(list)
+    print(corpus)
     for page in corpus:
-        for linked_page in corpus[page]:
-            reverse_corpus[linked_page].append(page)
+        # A page that has no links at all should be interpreted as having one link for every page in the corpus (including itself).
+        if not corpus[page]:
+            print("LINKS TO NOTHING")
+            for linked_page in corpus.keys():
+                reverse_corpus[linked_page].append(page)
+        else:    
+            for linked_page in corpus[page]:
+                reverse_corpus[linked_page].append(page)
+    print(reverse_corpus)
         
+    #corpus - page1 links to page3 page4 page 5, page2 links to none
     n_pages = len(corpus)
     old_rank = copy.deepcopy(rank)
     changes = True
@@ -141,10 +147,7 @@ def iterate_pagerank(corpus, damping_factor):
                 changes = True
         old_rank = copy.deepcopy(rank)
         
-    return rank    
-
-        
-
+    return rank
 
 
 if __name__ == "__main__":
