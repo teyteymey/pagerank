@@ -3,6 +3,7 @@ import random
 import re
 import sys
 from collections import defaultdict
+import copy
 
 DAMPING = 0.85
 SAMPLES = 10000
@@ -116,9 +117,31 @@ def iterate_pagerank(corpus, damping_factor):
     for page in corpus:
         for linked_page in corpus[page]:
             reverse_corpus[linked_page].append(page)
-
-    print(reverse_corpus)
-    
+        
+    n_pages = len(corpus)
+    old_rank = copy.deepcopy(rank)
+    changes = True
+    safety = 0
+    while changes or safety > 1000:
+        # default false but set to true if one of the pages doesnt converge
+        changes = False
+        # iterate through all pages calculating probability
+        for page in rank:
+            # get pages that link to current page
+            origin_pages = reverse_corpus[page]
+            # calculate the prob of landing in it in randon
+            prob_random = (1-damping_factor)/n_pages
+            # prob of combining origin pages probabilities
+            prob_origins = 0
+            for link in origin_pages:
+                # probability of that origin page 
+                prob_origins += old_rank[link] / len(corpus[link])
+            rank[page] = prob_random + damping_factor * prob_origins
+            if abs(rank[page] - old_rank[page]) > 0.001:
+                changes = True
+        old_rank = copy.deepcopy(rank)
+        
+    return rank    
 
         
 
