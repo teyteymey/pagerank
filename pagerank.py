@@ -111,24 +111,20 @@ def iterate_pagerank(corpus, damping_factor):
     rank = {page: 1/len(corpus) for page in corpus}
     # reverse the corpus to know which pages could lead to key
     reverse_corpus = defaultdict(list)
-    print(corpus)
     for page in corpus:
         # A page that has no links at all should be interpreted as having one link for every page in the corpus (including itself).
         if not corpus[page]:
-            print("LINKS TO NOTHING")
             for linked_page in corpus.keys():
                 reverse_corpus[linked_page].append(page)
         else:    
             for linked_page in corpus[page]:
                 reverse_corpus[linked_page].append(page)
-    print(reverse_corpus)
         
     #corpus - page1 links to page3 page4 page 5, page2 links to none
     n_pages = len(corpus)
     old_rank = copy.deepcopy(rank)
     changes = True
-    safety = 0
-    while changes or safety > 1000:
+    while changes:
         # default false but set to true if one of the pages doesnt converge
         changes = False
         # iterate through all pages calculating probability
@@ -140,8 +136,10 @@ def iterate_pagerank(corpus, damping_factor):
             # prob of combining origin pages probabilities
             prob_origins = 0
             for link in origin_pages:
-                # probability of that origin page 
-                prob_origins += old_rank[link] / len(corpus[link])
+                # probability of that origin page
+                # if the page does not link to any other page, we assume it links to all the existing ones, so corpus lenght
+                div_value = len(corpus[link]) if len(corpus[link]) != 0 else n_pages
+                prob_origins += old_rank[link] / div_value
             rank[page] = prob_random + damping_factor * prob_origins
             if abs(rank[page] - old_rank[page]) > 0.001:
                 changes = True
